@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samatvalife - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #A3B180 0%, #88C4D6 100%);
+            padding: 20px 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-nav {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: white;
+            color: #5D4634;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-left: 4px solid #D96C44;
+        }
+
+        .stat-card h3 {
+            color: #999;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .stat-subtext {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 10px 18px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            border-color: #D96C44;
+            background: #D96C44;
+            color: white;
+        }
+
+        .filter-btn:hover {
+            border-color: #D96C44;
+        }
+
+        .submissions-table {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px;
+            background: #f9f9f9;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .sort-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 15px 20px;
+            text-align: left;
+            background: #f9f9f9;
+            border-bottom: 2px solid #e0e0e0;
+            font-weight: 600;
+            font-size: 13px;
+            color: #5D4634;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #D96C44;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-new {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-review {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-view {
+            background: #88C4D6;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #6DB0C5;
+            transform: translateY(-2px);
+        }
+
+        .btn-email {
+            background: #A3B180;
+            color: white;
+        }
+
+        .btn-email:hover {
+            background: #8A9867;
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+
+        .modal-header h3 {
+            color: #2c3e50;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .detail-field {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-weight: 700;
+            color: #D96C44;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-size: 14px;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .no-submissions {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-submissions i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        .no-submissions p {
+            font-size: 16px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .export-btn {
+            background: #27ae60;
+            color: white;
+        }
+
+        .export-btn:hover {
+            background: #229954;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .pagination button.active {
+            background: #D96C44;
+            color: white;
+            border-color: #D96C44;
+        }
+
+        @media (max-width: 1024px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            td, th {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            table {
+                font-size: 11px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                margin: 20px;
+                max-width: none;
+            }
+        }
+
+        .search-bar {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 300px;
+            transition: border-color 0.3s;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #D96C44;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .export-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>
+            <i class="fas fa-chart-bar"></i>
+            Samatvalife - Admin Dashboard
+        </h1>
+        <div class="navbar-buttons">
+            <button class="btn-nav" onclick="exportToCSV()">
+                <i class="fas fa-download"></i> Export CSV
+            </button>
+            <button class="btn-nav" onclick="refreshData()">
+                <i class="fas fa-sync"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Statistics Cards -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <h3>Total Applications</h3>
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-subtext">All submissions received</div>
+            </div>
+            <div class="stat-card">
+                <h3>This Month</h3>
+                <div class="stat-value" id="monthCount">0</div>
+                <div class="stat-subtext">Submissions this month</div>
+            </div>
+            <div class="stat-card">
+                <h3>Top Category</h3>
+                <div class="stat-value" id="topCategory">-</div>
+                <div class="stat-subtext">Most applications</div>
+            </div>
+            <div class="stat-card">
+                <h3>Locations</h3>
+                <div class="stat-value" id="locationCount">0</div>
+                <div class="stat-subtext">Unique areas covered</div>
+            </div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="filters">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Search by name, email, or contact..." onkeyup="filterSubmissions()">
+            <div id="categoryFilters" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+        </div>
+
+        <!-- Submissions Table -->
+        <div class="submissions-table">
+            <div class="table-header">
+                <h2>All Applications</h2>
+                <div class="sort-controls">
+                    <button class="filter-btn" onclick="sortBy('date')">Latest First</button>
+                    <button class="filter-btn" onclick="sortBy('name')">Name (A-Z)</button>
+                </div>
+            </div>
+
+            <div id="tableContainer">
+                <div class="empty-state">
+                    <i class="fas fa-inbox" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                    <p>No submissions yet. Submissions will appear here when received.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalName">Application Details</h3>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div id="detailContent"></div>
+            <div class="modal-actions">
+                <button class="btn-email" onclick="emailSubmission()">
+                    <i class="fas fa-envelope"></i> Send Email
+                </button>
+                <button class="btn-delete" onclick="deleteSubmission()">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allSubmissions = [];
+        let filteredSubmissions = [];
+        let currentSubmissionIndex = -1;
+        let sortOrder = 'date';
+        let currentFilter = 'All';
+
+        // Initialize - load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('samatvalife_submissions');
+            allSubmissions = saved ? JSON.parse(saved) : [];
+            
+            // For demo purposes, we'll add sample data if empty
+            if (allSubmissions.length === 0) {
+                loadSampleData();
+            }
+            
+            updateDashboard();
+        }
+
+        function loadSampleData() {
+            // Sample data for demonstration
+            allSubmissions = [
+                {
+                    id: 1,
+                    timestamp: new Date(Date.now() - 2*24*60*60*1000).toLocaleString('en-IN'),
+                    name: 'Priya Sharma',
+                    email: 'priya.sharma@email.com',
+                    contact: '9876543210',
+                    category: 'Yoga Coach',
+                    experience: '5',
+                    areaOfExperience: 'Vinyasa and Hatha Yoga',
+                    certifications: 'RYT-500, IYENGAR',
+                    location: 'South Bengaluru',
+                    area: 'Koramangala',
+                    timeAvailability: 'Morning (6-9 AM), Evening (5-7 PM)',
+                    workPreference: 'Full-time',
+                    freelanceStatus: 'No',
+                    companyName: '',
+                    coachingMethod: 'Both',
+                    socialMedia: '@priya_yoga_life',
+                    gender: 'Female',
+                    age: '28'
+                },
+                {
+                    id: 2,
+                    timestamp: new Date(Date.now() - 1*24*60*60*1000).toLocaleString('en-IN'),
+                    name: 'Rajesh Kumar',
+                    email: 'rajesh.kumar@email.com',
+                    contact: '9123456789',
+                    category: 'Strength Training Coach',
+                    experience: '8',
+                    areaOfExperience: 'CrossFit and Functional Training',
+                    certifications: 'ACE, NASM, CrossFit Level 2',
+                    location: 'North Bengaluru',
+                    area: 'Whitefield',
+                    timeAvailability: 'Morning (6-10 AM), Evening (5-8 PM)',
+                    workPreference: 'Both',
+                    freelanceStatus: 'Yes',
+                    companyName: 'FitZone Gym',
+                    coachingMethod: 'Online',
+                    socialMedia: 'youtube.com/@rajesh_fitness',
+                    gender: 'Male',
+                    age: '35'
+                }
+            ];
+        }
+
+        function updateDashboard() {
+            // Update stats
+            const total = allSubmissions.length;
+            document.getElementById('totalCount').textContent = total;
+
+            // This month count
+            const thisMonth = allSubmissions.filter(s => {
+                const date = new Date(s.timestamp);
+                const now = new Date();
+                return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+            }).length;
+            document.getElementById('monthCount').textContent = thisMonth;
+
+            // Top category
+            if (allSubmissions.length > 0) {
+                const categories = {};
+                allSubmissions.forEach(s => {
+                    categories[s.category] = (categories[s.category] || 0) + 1;
+                });
+                const topCat = Object.keys(categories).reduce((a, b) => 
+                    categories[a] > categories[b] ? a : b
+                );
+                document.getElementById('topCategory').textContent = topCat;
+            }
+
+            // Unique locations
+            const locations = new Set(allSubmissions.map(s => s.area));
+            document.getElementById('locationCount').textContent = locations.size;
+
+            // Create category filters
+            const categories = ['All', ...new Set(allSubmissions.map(s => s.category))];
+            const filterHTML = categories.map(cat => 
+                `<button class="filter-btn ${cat === currentFilter ? 'active' : ''}" onclick="filterByCategory('${cat}')">${cat}</button>`
+            ).join('');
+            document.getElementById('categoryFilters').innerHTML = filterHTML;
+
+            // Display table
+            filterSubmissions();
+        }
+
+        function filterByCategory(category) {
+            currentFilter = category;
+            updateCategoryButtons();
+            filterSubmissions();
+        }
+
+        function updateCategoryButtons() {
+            const buttons = document.querySelectorAll('#categoryFilters .filter-btn');
+            buttons.forEach(btn => {
+                if (btn.textContent === currentFilter) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function filterSubmissions() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            filteredSubmissions = allSubmissions.filter(s => {
+                const matchesSearch = s.name.toLowerCase().includes(searchTerm) ||
+                                    s.email.toLowerCase().includes(searchTerm) ||
+                                    s.contact.includes(searchTerm);
+                const matchesCategory = currentFilter === 'All' || s.category === currentFilter;
+                return matchesSearch && matchesCategory;
+            });
+
+            // Sort
+            if (sortOrder === 'date') {
+                filteredSubmissions.reverse();
+            } else if (sortOrder === 'name') {
+                filteredSubmissions.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            displayTable();
+        }
+
+        function displayTable() {
+            const container = document.getElementById('tableContainer');
+
+            if (filteredSubmissions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                        <p>No applications match your search criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Contact</th>
+                            <th>Location</th>
+                            <th>Experience</th>
+                            <th>Work Pref</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredSubmissions.map((s, idx) => `
+                            <tr>
+                                <td><strong>${s.name}</strong></td>
+                                <td><span class="category-badge">${s.category}</span></td>
+                                <td>${s.contact}</td>
+                                <td>${s.area || s.location}</td>
+                                <td>${s.experience} yrs</td>
+                                <td>${s.workPreference}</td>
+                                <td>${new Date(s.timestamp).toLocaleDateString('en-IN')}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-action btn-view" onclick="viewSubmission(${allSubmissions.indexOf(s)})">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                        <button class="btn-action btn-email" onclick="viewAndEmail(${allSubmissions.indexOf(s)})">
+                                            <i class="fas fa-envelope"></i> Email
+                                        </button>
+                                        <button class="btn-action btn-delete" onclick="deleteSubmissionDirect(${allSubmissions.indexOf(s)})">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
+        }
+
+        function viewSubmission(index) {
+            currentSubmissionIndex = index;
+            const s = allSubmissions[index];
+            document.getElementById('modalName').textContent = s.name;
+
+            const detailHTML = `
+                <div class="detail-grid">
+                    <div class="detail-field">
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value">${s.email}</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Contact</div>
+                        <div class="detail-value">${s.contact}</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Gender</div>
+                        <div class="detail-value">${s.gender}</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Age</div>
+                        <div class="detail-value">${s.age}</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Category</div>
+                        <div class="detail-value"><span class="category-badge">${s.category}</span></div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Experience</div>
+                        <div class="detail-value">${s.experience} years</div>
+                    </div>
+                    <div class="detail-field" style="grid-column: 1/-1;">
+                        <div class="detail-label">Area of Experience</div>
+                        <div class="detail-value">${s.areaOfExperience}</div>
+                    </div>
+                    <div class="detail-field" style="grid-column: 1/-1;">
+                        <div class="detail-label">Certifications</div>
+                        <div class="detail-value">${s.certifications}</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Location</div>
+                        <div class="detail-value">${s.location}</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Area</div>
+                        <div class="detail-value">${s.area}</div>
+                    </div>
+                    <div class="detail-field" style="grid-column: 1/-1;">
+                        <div class="detail-label">Time Availability</div>
+                        <div class="detail-value">${s.timeAvailability}</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Work Preference</div>
+                        <div class="detail-value">${s.workPreference}</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Employment Status</div>
+                        <div class="detail-value">${s.freelanceStatus}</div>
+                    </div>
+                    ${s.companyName ? `
+                    <div class="detail-field">
+                        <div class="detail-label">Organization</div>
+                        <div class="detail-value">${s.companyName}</div>
+                    </div>
+                    ` : ''}
+                    <div class="detail-field">
+                        <div class="detail-label">Coaching Method</div>
+                        <div class="detail-value">${s.coachingMethod}</div>
+                    </div>
+                    ${s.socialMedia ? `
+                    <div class="detail-field">
+                        <div class="detail-label">Social Media</div>
+                        <div class="detail-value">${s.socialMedia}</div>
+                    </div>
+                    ` : ''}
+                    <div class="detail-field">
+                        <div class="detail-label">Submitted</div>
+                        <div class="detail-value">${s.timestamp}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('detailContent').innerHTML = detailHTML;
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function viewAndEmail(index) {
+            viewSubmission(index);
+            setTimeout(() => emailSubmission(), 100);
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+            currentSubmissionIndex = -1;
+        }
+
+        function emailSubmission() {
+            if (currentSubmissionIndex < 0) return;
+            const s = allSubmissions[currentSubmissionIndex];
+
+            const body = `Dear Hiring Team,\n\nPlease find the application details below:\n\n` +
+                `Name: ${s.name}\n` +
+                `Email: ${s.email}\n` +
+                `Phone: ${s.contact}\n` +
+                `Category: ${s.category}\n` +
+                `Experience: ${s.experience} years\n` +
+                `Location: ${s.location}, ${s.area}\n` +
+                `Work Preference: ${s.workPreference}\n` +
+                `Coaching Method: ${s.coachingMethod}\n` +
+                `Available: ${s.timeAvailability}\n\n` +
+                `Submitted: ${s.timestamp}`;
+
+            window.location.href = `mailto:?subject=Application - ${s.name}&body=${encodeURIComponent(body)}`;
+        }
+
+        function deleteSubmission() {
+            if (confirm('Delete this application?')) {
+                allSubmissions.splice(currentSubmissionIndex, 1);
+                localStorage.setItem('samatvalife_submissions', JSON.stringify(allSubmissions));
+                closeModal();
+                updateDashboard();
+            }
+        }
+
+        function deleteSubmissionDirect(index) {
+            if (confirm('Delete this application?')) {
+                allSubmissions.splice(index, 1);
+                localStorage.setItem('samatvalife_submissions', JSON.stringify(allSubmissions));
+                updateDashboard();
+            }
+        }
+
+        function sortBy(type) {
+            sortOrder = type;
+            filterSubmissions();
+        }
+
+        function exportToCSV() {
+            if (allSubmissions.length === 0) {
+                alert('No data to export');
+                return;
+            }
+
+            let csv = 'Timestamp,Name,Email,Contact,Category,Experience,Area,Location,Work Preference,Freelance Status,Company,Coaching Method,Social Media\n';
+            
+            allSubmissions.forEach(s => {
+                csv += `"${s.timestamp}","${s.name}","${s.email}","${s.contact}","${s.category}","${s.experience}","${s.area}","${s.location}","${s.workPreference}","${s.freelanceStatus}","${s.companyName || '-'}","${s.coachingMethod}","${s.socialMedia || '-'}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `samatvalife_applications_${new Date().getTime()}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function refreshData() {
+            loadData();
+            alert('Data refreshed');
+        }
+
+        // Close modal on outside click
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>
